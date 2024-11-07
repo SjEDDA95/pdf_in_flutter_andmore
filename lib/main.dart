@@ -40,6 +40,8 @@ class _HomePageState extends State<HomePage> {
   ];
   int number = 0;
 
+  final TextEditingController emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +113,36 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [const Text("Total"), Text("${getTotal()} €")],
             ),
+            const SizedBox(height: 30),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: "Adresse e-mail",
+                hintText: "Entrez l'adresse du client",
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                final email = emailController.text;
+                if (email.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Entrez une adresse mail")),
+                  );
+                  return;
+                }
+                final data = await service.createInvoice(products);
+                await service.sendEmailWithInvoice(email, data);
+                emailController.clear();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Invoice successfully sent")),
+                );
+              },
+              child: const Text("Send Invoice by Email"),
+            ),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
                 final data = await service.createInvoice(products);

@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'model/product.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class CustomRow {
   final String itemName;
@@ -171,5 +172,25 @@ class PdfInvoiceService {
               prev + ((next.price / 100 * next.vatInPercent) * next.amount),
         )
         .toStringAsFixed(2);
+  }
+
+  sendEmailWithInvoice(String recipientEmail, Uint8List pdfData) async {
+    final tempDir = await getTemporaryDirectory();
+    final filePath = '${tempDir.path}/invoice.pdf';
+    final file = File(filePath);
+    await file.writeAsBytes(pdfData);
+
+    final Email email = Email(
+      body: "Here is your invoice",
+      subject: "Your invoice",
+      recipients: [recipientEmail],
+      attachmentPaths: [filePath],
+      isHTML: false,
+    );
+    try {
+      await FlutterEmailSender.send(email);
+    } catch (error) {
+      print("bruh");
+    }
   }
 }
