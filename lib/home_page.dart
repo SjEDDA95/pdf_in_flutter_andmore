@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_gen/login_page.dart';
+import 'package:pdf_gen/users_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'invoice_service.dart';
@@ -45,6 +46,16 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Invoice Generator"),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () {
+              // Naviguer vers la page des utilisateurs
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UsersPage()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
